@@ -9,4 +9,6 @@ urlpatterns = [
     path('tweet/<int:id>', views.tweet_detail, name='tweet_detail'),
     path('tweet/comment/<int:id>', views.tweet_comment_write, name='tweet_comment_write'),
     path('tweet/comment/delete/<int:id>', views.tweet_comment_delete, name='tweet_comment_delete'),
+    path('tag/', views.TagCloudTV.as_view(), name='tag_cloud'),
+    path('tag/<str:tag>/', views.TaggedObjectLV.as_view(), name='tagged_object_list'),
 ]

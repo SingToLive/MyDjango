@@ -12,17 +12,20 @@ def sign_up_view(request):
         else:
             return redirect('/')
     elif request.method == 'POST':
-        username = request.POST.get('username', None)
-        password = request.POST.get('password', None)
-        password2 = request.POST.get('password2', None)
-        bio = request.POST.get('bio', None)
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        password2 = request.POST.get('password2', '')
+        bio = request.POST.get('bio', '')
 
         if password != password2:
-            return render(request, 'user/signup.html')
+            #패스워드가 같지 않다고 알람
+            return render(request, 'user/signup.html', {'error':'패스워드를 확인 해 주세요!'})
         else:
+            if username == '' or password == '':
+                return render(request, 'user/signup.html', {'error': '사용자 이름과 비밀번호는 필수 값 입니다.'})
             old_user = auth.get_user_model().objects.filter(username=username)
             if old_user:
-                return render(request, 'user/signup.html')
+                return render(request, 'user/signup.html', {'error': '이미 존재하는 사용자 이름입니다.'})
             else:
                 UserModel.objects.create_user(
                     username=username,
@@ -34,8 +37,8 @@ def sign_up_view(request):
 
 def sign_in_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username', None)
-        password = request.POST.get('password', None)
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
 
         me = auth.authenticate(request, username=username, password=password) #authenticate 암호화된 비빌번호와 입력된 비밀번호가 맞는지 그리고 사용자와 맞는지 확인을 해준다.
         if me is not None:
@@ -43,7 +46,7 @@ def sign_in_view(request):
             # return HttpResponse(f'{me.username} 로그인에 성공하셨습니다!')
             return redirect('/')
         else:
-            return redirect('/sign-in')
+            return render(request, 'user/signin.html', {'error':'유저이름 혹은 패스워드를 확인 해 주세요'})
 
     elif request.method == 'GET':
         user = request.user.is_authenticated
